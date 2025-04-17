@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { client } from '../../../utils/db';
 
-export const del: APIRoute = async ({ params }) => {
+export const DELETE: APIRoute = async ({ params }) => {
   try {
     const { id } = params;
     await client.query('DELETE FROM links WHERE id = $1', [id]);
