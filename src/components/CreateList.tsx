@@ -6,11 +6,13 @@ export function CreateList() {
   const [description, setDescription] = useState('');
   const [slug, setSlug] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [focusedInput, setFocusedInput] = useState<'title' | 'slug' | 'description' | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
 
     try {
       const response = await fetch('/api/lists', {
@@ -20,19 +22,19 @@ export function CreateList() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to create list');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create list');
       }
 
-      const list = await response.json();
-      
-      if (!list.slug) {
+      const data = await response.json();
+      if (!data.slug) {
         throw new Error('No slug returned from server');
       }
 
-      window.location.href = `/list/${list.slug}`;
+      window.location.href = `/list/${data.slug}`;
     } catch (error) {
       console.error('Error creating list:', error);
+      setError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setIsSubmitting(false);
     }
@@ -40,6 +42,11 @@ export function CreateList() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto w-full p-4">
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600">
+          {error}
+        </div>
+      )}
       <div className="relative group">
         <div className={`absolute inset-0 bg-[#15BFAE]/5 pointer-events-none
           rounded-xl opacity-0 transition-opacity duration-300
