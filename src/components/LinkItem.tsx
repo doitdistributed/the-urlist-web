@@ -8,9 +8,10 @@ interface LinkItemProps {
   image: string;
   onDelete: (id: number) => void;
   onEdit: (id: number, data: { url: string; title?: string; description?: string }) => void;
+  dragHandleProps?: any; // dnd-kit listeners for drag handle (optional)
 }
 
-export function LinkItem({ id, title, url, description, image, onDelete, onEdit }: LinkItemProps) {
+export function LinkItem({ id, title, url, description, image, onDelete, onEdit, dragHandleProps }: LinkItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editUrl, setEditUrl] = useState(url);
   const [editTitle, setEditTitle] = useState(title);
@@ -91,6 +92,17 @@ export function LinkItem({ id, title, url, description, image, onDelete, onEdit 
       bg-white hover:bg-gray-50
       border border-gray-200
       transition-all duration-300">
+      {/* Drag handle if provided */}
+      {dragHandleProps && (
+        <button
+          {...dragHandleProps}
+          tabIndex={0}
+          aria-label="Drag to reorder"
+          className="mr-2 cursor-grab active:cursor-grabbing p-2 rounded-lg hover:bg-gray-100 focus:outline-none"
+        >
+          <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><circle cx="7" cy="6" r="1.5" fill="#A0AEC0"/><circle cx="7" cy="10" r="1.5" fill="#A0AEC0"/><circle cx="7" cy="14" r="1.5" fill="#A0AEC0"/><circle cx="13" cy="6" r="1.5" fill="#A0AEC0"/><circle cx="13" cy="10" r="1.5" fill="#A0AEC0"/><circle cx="13" cy="14" r="1.5" fill="#A0AEC0"/></svg>
+        </button>
+      )}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-4">
           <a

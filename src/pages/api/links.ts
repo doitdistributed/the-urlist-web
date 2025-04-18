@@ -49,25 +49,60 @@ export const POST: APIRoute = async ({ request }) => {
 export const GET: APIRoute = async ({ url }) => {
   try {
     const listId = url.searchParams.get('list_id');
-    
     if (!listId) {
       return new Response(JSON.stringify({ error: 'list_id is required' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
     }
-
+    // Order by position if present, else by created_at
     const result = await client.query(
-      'SELECT * FROM links WHERE list_id = $1 ORDER BY created_at DESC',
-      [listId]
+      'SELECT * FROM links WHERE list_id = $1 ORDER BY COALESCE(position, 999999), created_at ASC',
+      [Number(listId)]
     );
-
     return new Response(JSON.stringify(result.rows), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error: any) {
     console.error('Error fetching links:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+};
+
+export const PATCH: APIRoute = async ({ request }) => {
+  try {
+    const body = await request.json();
+    let { orderedIds, list_id } = body;
+    if (!Array.isArray(orderedIds)) {
+      return new Response(JSON.stringify({ error: 'Invalid payload' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    // Accept list_id as string or number
+    list_id = Number(list_id);
+    if (isNaN(list_id)) {
+      return new Response(JSON.stringify({ error: 'Invalid list_id' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    // Update each link's position in the DB
+    for (let i = 0; i < orderedIds.length; i++) {
+      await client.query(
+        'UPDATE links SET position = $1 WHERE id = $2 AND list_id = $3',
+        [i + 1, orderedIds[i], list_id]
+      );
+    }
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error: any) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
