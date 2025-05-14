@@ -10,6 +10,8 @@ Technologies used...
 - Tailwind CSS
 - Postgres
 
+the owner of the GitHub repo is burkeholland
+
 Do not use an ORM, just use the native Postgres driver.
 
 Make sure all terminal commands work in Powershell.

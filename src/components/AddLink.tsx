@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
 import { Button } from './Button';
 import type { FormEvent } from 'react';
-import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { currentLinks } from '../stores/lists';
 
 interface AddLinkProps {
@@ -14,10 +13,6 @@ export function AddLink({ listId, onAdd }: AddLinkProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useKeyboardShortcuts('/', () => {
-    inputRef.current?.focus();
-  }, { excludeInputs: true });
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -69,13 +64,6 @@ export function AddLink({ listId, onAdd }: AddLinkProps) {
                 transition-all duration-300"
               required
             />
-            <div className="absolute right-[calc(6rem+theme(space.3))] top-1/2 -translate-y-1/2 
-              pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <kbd className="px-2 py-1 text-xs text-gray-500 bg-gray-50 
-                rounded-lg border border-gray-200">
-                Press /
-              </kbd>
-            </div>
           </div>
           <Button type="submit" isLoading={isSubmitting}>
             {isSubmitting ? (
