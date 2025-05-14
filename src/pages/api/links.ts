@@ -1,3 +1,4 @@
+
 import type { APIRoute } from 'astro';
 import { client } from '../../utils/db';
 import fetch from 'node-fetch';
@@ -5,6 +6,7 @@ import metascraper from 'metascraper';
 import metascraperTitle from 'metascraper-title';
 import metascraperDescription from 'metascraper-description';
 import metascraperImage from 'metascraper-image';
+import { sanitizeUrl } from '../../utils/validation';
 
 const scraper = metascraper([
   metascraperTitle(),
@@ -15,7 +17,9 @@ const scraper = metascraper([
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { url, list_id } = body;
+
+    let { url, list_id } = body;
+    url = sanitizeUrl(url);
 
     // Fetch metadata
     const response = await fetch(url);

@@ -9,8 +9,14 @@ export function isValidUrl(urlString: string): boolean {
 
 export function sanitizeUrl(url: string): string {
   const trimmed = url.trim();
-  if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
-    return `https://${trimmed}`;
+  // If starts with protocol, return as is
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
   }
-  return trimmed;
+  // If starts with //, treat as protocol-relative
+  if (/^\/\//.test(trimmed)) {
+    return trimmed;
+  }
+  // Otherwise, prepend https://
+  return `https://${trimmed}`;
 }

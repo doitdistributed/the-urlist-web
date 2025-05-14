@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Button } from './Button';
 import type { FormEvent } from 'react';
 import { currentLinks } from '../stores/lists';
+import { sanitizeUrl } from '../utils/validation';
 
 interface AddLinkProps {
   listId: number;
@@ -16,14 +17,18 @@ export function AddLink({ listId, onAdd }: AddLinkProps) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
     if (!url.trim()) return;
+    // Allow protocol-relative and protocol-less URLs by normalizing
+    const normalizedUrl = sanitizeUrl(url.trim());
 
     setIsSubmitting(true);
     try {
+
       const response = await fetch('/api/links', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: url.trim(), list_id: listId })
+        body: JSON.stringify({ url: normalizedUrl, list_id: listId })
       });
 
       if (!response.ok) {
@@ -46,13 +51,17 @@ export function AddLink({ listId, onAdd }: AddLinkProps) {
       <div className="relative group">
         <div className={`absolute inset-0 bg-[#15BFAE]/5 
           rounded-xl opacity-0 transition-opacity duration-300
-          ${isFocused ? 'opacity-100' : 'group-hover:opacity-100'}`} 
+          ${isFocused ? 'opacity-100' : 'group-hover:opacity-100'}`}
         />
         <div className="relative flex gap-3">
           <div className="flex-1">
             <input
               ref={inputRef}
-              type="url"
+              type="text"
+              inputMode="url"
+              autoCorrect="off"
+              autoCapitalize="none"
+              spellCheck={false}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               onFocus={() => setIsFocused(true)}
