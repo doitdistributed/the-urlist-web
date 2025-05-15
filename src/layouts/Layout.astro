@@ -1,6 +1,5 @@
 ---
 import "../styles/global.css";
-import { ThemeToggle } from "../components/ThemeToggle";
 
 interface Props {
   title?: string;
@@ -14,7 +13,7 @@ const {
 
 const canonicalURL = new URL(
   Astro.url.pathname,
-  Astro.site ?? "https://theurlist.com"
+  Astro.site ?? "https://theurlist.com",
 );
 ---
 
@@ -48,13 +47,25 @@ const canonicalURL = new URL(
       rel="stylesheet"
     />
   </head>
-  <body class="flex min-h-screen flex-col bg-white text-gray-900 relative overflow-x-hidden antialiased">
+  <body
+    class="flex min-h-screen flex-col bg-white text-gray-900 relative overflow-x-hidden antialiased"
+  >
     <!-- Subtle gradient accents -->
-    <div class="fixed inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(21,191,174,0.05),transparent_70%)]"></div>
-    <div class="fixed inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(3,165,119,0.05),transparent_70%)]"></div>
+    <div
+      class="fixed inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(21,191,174,0.05),transparent_70%)]"
+    >
+    </div>
+    <div
+      class="fixed inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(3,165,119,0.05),transparent_70%)]"
+    >
+    </div>
 
-    <nav class="sticky top-0 z-20 backdrop-blur-lg border-b border-[#15BFAE]/10">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+    <nav
+      class="sticky top-0 z-20 backdrop-blur-lg border-b border-[#15BFAE]/10"
+    >
+      <div
+        class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between"
+      >
         <a
           href="/"
           class="text-xl font-bold text-[#03A678] hover:text-[#15BFAE] transition-all duration-300 flex items-center gap-2"
@@ -65,18 +76,27 @@ const canonicalURL = new URL(
         <div class="ml-8 flex-1">
           <ul class="flex gap-6 justify-center">
             <li>
-              <a href="/" class="text-gray-700 hover:text-[#15BFAE] font-medium transition-colors duration-200">My Lists</a>
+              <a
+                href="/"
+                class="text-gray-700 hover:text-[#15BFAE] font-medium transition-colors duration-200"
+                >My Lists</a
+              >
             </li>
             <li>
-              <a href="/about" class="text-gray-700 hover:text-[#15BFAE] font-medium transition-colors duration-200">About</a>
+              <a
+                href="/about"
+                class="text-gray-700 hover:text-[#15BFAE] font-medium transition-colors duration-200"
+                >About</a
+              >
             </li>
             <li>
-              <a href="/terms" class="text-gray-700 hover:text-[#15BFAE] font-medium transition-colors duration-200">Terms</a>
+              <a
+                href="/terms"
+                class="text-gray-700 hover:text-[#15BFAE] font-medium transition-colors duration-200"
+                >Terms</a
+              >
             </li>
           </ul>
-        </div>
-        <div class="flex items-center">
-          <ThemeToggle client:only="react" />
         </div>
       </div>
     </nav>
@@ -87,9 +107,16 @@ const canonicalURL = new URL(
       </div>
     </main>
 
-    <footer class="relative z-10 py-8 backdrop-blur-lg border-t border-[#15BFAE]/10 mt-auto">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600">
-        <p>&copy; {new Date().getFullYear()} The Urlist. Share your links with the world.</p>
+    <footer
+      class="relative z-10 py-8 backdrop-blur-lg border-t border-[#15BFAE]/10 mt-auto"
+    >
+      <div
+        class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600"
+      >
+        <p>
+          &copy; {new Date().getFullYear()} The Urlist. Share your links with the
+          world.
+        </p>
       </div>
     </footer>
   </body>
