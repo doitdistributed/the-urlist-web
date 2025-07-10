@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 interface Props {
   title?: string;
@@ -13,7 +14,7 @@ const {
 
 const canonicalURL = new URL(
   Astro.url.pathname,
-  Astro.site ?? "https://theurlist.com",
+  Astro.site ?? "https://theurlist.com"
 );
 ---
 
@@ -47,25 +48,13 @@ const canonicalURL = new URL(
       rel="stylesheet"
     />
   </head>
-  <body
-    class="flex min-h-screen flex-col bg-white text-gray-900 relative overflow-x-hidden antialiased"
-  >
+  <body class="flex min-h-screen flex-col bg-white text-gray-900 relative overflow-x-hidden antialiased">
     <!-- Subtle gradient accents -->
-    <div
-      class="fixed inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(21,191,174,0.05),transparent_70%)]"
-    >
-    </div>
-    <div
-      class="fixed inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(3,165,119,0.05),transparent_70%)]"
-    >
-    </div>
+    <div class="fixed inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(21,191,174,0.05),transparent_70%)]"></div>
+    <div class="fixed inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(3,165,119,0.05),transparent_70%)]"></div>
 
-    <nav
-      class="sticky top-0 z-20 backdrop-blur-lg border-b border-[#15BFAE]/10"
-    >
-      <div
-        class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between"
-      >
+    <nav class="sticky top-0 z-20 backdrop-blur-lg border-b border-[#15BFAE]/10">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         <a
           href="/"
           class="text-xl font-bold text-[#03A678] hover:text-[#15BFAE] transition-all duration-300 flex items-center gap-2"
@@ -73,32 +62,37 @@ const canonicalURL = new URL(
           <img src="/favicon.svg" alt="" class="w-6 h-6" />
           The Urlist
         </a>
-        <div class="ml-8 flex-1">
-          <ul class="flex gap-6 justify-center">
+        <div class="flex items-center ml-auto">
+          <!-- Hamburger for mobile -->
+          <button id="nav-toggle" class="block lg:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-[#15BFAE]" aria-label="Open navigation" onclick="document.getElementById('nav-menu').classList.toggle('hidden')">
+            <svg class="w-6 h-6 text-[#03A678]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <ul id="nav-menu" class="hidden lg:flex gap-6 items-center ml-6 bg-white lg:bg-transparent absolute lg:static top-full right-0 mt-2 lg:mt-0 shadow-lg lg:shadow-none rounded-lg lg:rounded-none p-4 lg:p-0 min-w-[180px] lg:min-w-0">
             <li>
-              <a
-                href="/"
-                class="text-gray-700 hover:text-[#15BFAE] font-medium transition-colors duration-200"
-                >My Lists</a
-              >
+              <a href="/lists" class="block text-gray-700 hover:text-[#15BFAE] font-medium transition-colors duration-200 py-2 lg:py-0">My Lists</a>
             </li>
             <li>
-              <a
-                href="/about"
-                class="text-gray-700 hover:text-[#15BFAE] font-medium transition-colors duration-200"
-                >About</a
-              >
+              <a href="/about" class="block text-gray-700 hover:text-[#15BFAE] font-medium transition-colors duration-200 py-2 lg:py-0">About</a>
             </li>
             <li>
-              <a
-                href="/terms"
-                class="text-gray-700 hover:text-[#15BFAE] font-medium transition-colors duration-200"
-                >Terms</a
-              >
+              <a href="/terms" class="block text-gray-700 hover:text-[#15BFAE] font-medium transition-colors duration-200 py-2 lg:py-0">Terms</a>
             </li>
           </ul>
+          <div class="ml-4">
+            <ThemeToggle client:only="react" />
+          </div>
         </div>
       </div>
+      <script>
+        // Hide nav menu on resize to large screens
+        window.addEventListener('resize', () => {
+          if (window.innerWidth >= 1024) {
+            document.getElementById('nav-menu')?.classList.add('hidden');
+          }
+        });
+      </script>
     </nav>
 
     <main class="flex-grow relative z-10">
@@ -107,16 +101,9 @@ const canonicalURL = new URL(
       </div>
     </main>
 
-    <footer
-      class="relative z-10 py-8 backdrop-blur-lg border-t border-[#15BFAE]/10 mt-auto"
-    >
-      <div
-        class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600"
-      >
-        <p>
-          &copy; {new Date().getFullYear()} The Urlist. Share your links with the
-          world.
-        </p>
+    <footer class="relative z-10 py-8 backdrop-blur-lg border-t border-[#15BFAE]/10 mt-auto">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600">
+        <p>&copy; {new Date().getFullYear()} The Urlist. Share your links with the world.</p>
       </div>
     </footer>
   </body>

@@ -19,7 +19,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     const body = await request.json();
-    const { title, description, slug = nanoid(10) } = body;
+    const { title, description = null, slug = nanoid(10) } = body;
 
     if (!title) {
       return jsonResponse({ error: 'Title is required' }, 400);

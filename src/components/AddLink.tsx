@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { Button } from './Button';
 import type { FormEvent } from 'react';
-import { currentLinks } from '../stores/lists';
+import { currentLinks, fetchLinks } from '../stores/lists';
 import { sanitizeUrl } from '../utils/validation';
 
 interface AddLinkProps {
@@ -35,8 +35,8 @@ export function AddLink({ listId, onAdd }: AddLinkProps) {
         throw new Error('Failed to add link');
       }
 
-      const newLink = await response.json();
-      currentLinks.set([newLink, ...currentLinks.get()]);
+      // After adding, re-fetch links from backend to ensure UI matches DB
+      await fetchLinks(listId);
       setUrl('');
       onAdd?.(); // Call the onAdd callback after successfully adding a link
     } catch (error) {

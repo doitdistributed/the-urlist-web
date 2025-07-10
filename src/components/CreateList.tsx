@@ -15,10 +15,15 @@ export function CreateList() {
     setError(null);
 
     try {
+      // Only send description if provided
+      const payload: Record<string, any> = { title };
+      if (slug) payload.slug = slug;
+      if (description && description.trim() !== '') payload.description = description;
+
       const response = await fetch('/api/lists', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description, slug })
+        body: JSON.stringify(payload)
       });
 
       if (!response.ok) {

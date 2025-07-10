@@ -14,11 +14,18 @@ import { CreateList } from "../components/CreateList";
       </p>
     </div>
 
+
     <div
-      class="bg-white rounded-2xl shadow-sm p-8 mb-16
+      class="bg-white rounded-2xl shadow-sm p-8 mb-8
       border border-gray-200"
     >
       <CreateList client:load />
+    </div>
+
+    <div class="flex justify-center mb-16">
+      <a href="/lists" class="inline-block px-6 py-3 rounded-xl bg-[#15BFAE] text-white font-semibold shadow hover:bg-[#03A678] transition-all">
+        View My Lists
+      </a>
     </div>
 
     <div class="grid md:grid-cols-3 gap-8">

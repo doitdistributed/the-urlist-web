@@ -1,0 +1,11 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { MyLists } from "../components/MyLists";
+---
+
+<Layout>
+  <main class="max-w-4xl mx-auto px-4 py-16">
+    <h1 class="text-3xl font-bold mb-8 text-gray-900">My Lists</h1>
+    <MyLists client:load />
+  </main>
+</Layout>
