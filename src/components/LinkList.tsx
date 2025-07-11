@@ -30,7 +30,7 @@ export function LinkList({ listId }: LinkListProps) {
   const handleEditLink = async (id: number, data: { url: string; title?: string; description?: string }) => {
     try {
       const response = await fetch(`/api/links/${id}`, {
-        method: 'PATCH',
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
@@ -58,7 +58,7 @@ export function LinkList({ listId }: LinkListProps) {
           key={link.id}
           {...link}
           onDelete={() => handleDeleteLink(link.id)}
-          onEdit={(id, data) => handleEditLink(id, data)}
+          onEdit={async (id, data) => await handleEditLink(id, data)}
         />
       ))}
       {links.length === 0 && (

@@ -7,7 +7,7 @@ interface LinkItemProps {
   url: string;
   image: string;
   onDelete: (id: number) => void;
-  onEdit: (id: number, data: { url: string; title?: string; description?: string }) => void;
+  onEdit: (id: number, data: { url: string; title?: string; description?: string }) => Promise<void>;
   dragHandleProps?: any; // dnd-kit listeners for drag handle (optional)
 }
 
@@ -17,14 +17,24 @@ export function LinkItem({ id, title, url, description, image, onDelete, onEdit,
   const [editTitle, setEditTitle] = useState(title);
   const [editDescription, setEditDescription] = useState(description);
   const [isFocused, setIsFocused] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  const handleSave = () => {
-    onEdit(id, {
-      url: editUrl,
-      title: editTitle,
-      description: editDescription
-    });
-    setIsEditing(false);
+  const handleSave = async () => {
+    setIsUpdating(true);
+    try {
+      // Call the onEdit callback which will handle the API call
+      await onEdit(id, {
+        url: editUrl,
+        title: editTitle,
+        description: editDescription
+      });
+      
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating link:', error);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   if (isEditing) {
@@ -77,10 +87,11 @@ export function LinkItem({ id, title, url, description, image, onDelete, onEdit,
           </button>
           <button
             onClick={handleSave}
+            disabled={isUpdating}
             className="px-4 py-2 text-white bg-[#15BFAE] hover:bg-[#03A678]
-              rounded-lg transition-all duration-300"
+              rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Save
+            {isUpdating ? 'Updating...' : 'Save'}
           </button>
         </div>
       </div>
@@ -91,7 +102,7 @@ export function LinkItem({ id, title, url, description, image, onDelete, onEdit,
     <div className="group relative flex items-start gap-4 p-5 rounded-2xl 
       bg-white hover:bg-gray-50
       border border-gray-200
-      transition-all duration-300">
+      transition-all duration-300 shadow-sm">
       {/* Drag handle if provided */}
       {dragHandleProps && (
         <button
@@ -103,17 +114,50 @@ export function LinkItem({ id, title, url, description, image, onDelete, onEdit,
           <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><circle cx="7" cy="6" r="1.5" fill="#A0AEC0"/><circle cx="7" cy="10" r="1.5" fill="#A0AEC0"/><circle cx="7" cy="14" r="1.5" fill="#A0AEC0"/><circle cx="13" cy="6" r="1.5" fill="#A0AEC0"/><circle cx="13" cy="10" r="1.5" fill="#A0AEC0"/><circle cx="13" cy="14" r="1.5" fill="#A0AEC0"/></svg>
         </button>
       )}
+      
+      {/* Preview image */}
+      {image && (
+        <div className="flex-shrink-0">
+          <img
+            src={image}
+            alt={title || "Link preview"}
+            className="w-16 h-16 object-cover rounded-lg border border-gray-100"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+            }}
+          />
+        </div>
+      )}
+      
+      {/* Fallback icon when no image */}
+      {!image && (
+        <div className="flex-shrink-0">
+          <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+          </div>
+        </div>
+      )}
+      
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-4">
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-lg font-medium text-gray-900 hover:text-[#15BFAE] 
-              transition-colors duration-300 break-all"
-          >
-            {title || url}
-          </a>
+          <div className="flex-1 min-w-0">
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-lg font-medium text-gray-900 hover:text-[#15BFAE] 
+                transition-colors duration-300 line-clamp-1"
+            >
+              {title || url}
+            </a>
+            {description && (
+              <p className="mt-1 text-sm text-gray-600 line-clamp-2">{description}</p>
+            )}
+            <p className="mt-2 text-xs text-gray-400 break-all line-clamp-1">{url}</p>
+          </div>
           <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button
               onClick={() => setIsEditing(true)}
@@ -137,9 +181,6 @@ export function LinkItem({ id, title, url, description, image, onDelete, onEdit,
             </button>
           </div>
         </div>
-        {description && (
-          <p className="mt-2 text-sm text-gray-600 line-clamp-2">{description}</p>
-        )}
       </div>
     </div>
   );
